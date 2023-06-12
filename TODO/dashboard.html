@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>TO-DO</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <link rel="stylesheet" href="./font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="dash.css">
+
+</head>
+
+<body onload="display()">
+
+  <h2 class="text-center p-3 text-white w-100">MY TODO LIST✔✔✔</h2>
+  <center>
+    <img class="w-25 rounded mt-2" src="./image_processing20200603-30491-3ivbmx.gif" alt="">
+
+    <div class="col-sm-9 col-md-6 col-12 col-lg-12 text-center mt-3 shadow-lg w-100 rounded exam p-4">
+
+      <div class="bg-primary rounded">
+
+
+        <input type="text" id="input" class="w-50 border-0 p-3 text-center rounded mt-2"
+          placeholder="ENTER AN ACTIVITY">
+
+        <button class="text-center p-3 border-0 rounded bg-warning" onclick="add()"><b> ADD TASK </b></button>
+
+        <table class="table-striped mt-5" id="myTable"></table>
+      </div>
+    </div>
+  </center>
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">EDIT</h5>
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="text" placeholder="New task" class="form-control my-2" id="enter">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-light" onclick="saveChanges()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var toDo = [];
+
+    if (localStorage.task) {
+      toDo = JSON.parse(localStorage.getItem("task"));
+    }
+
+    const add = () => {
+      if (input.value === "") {
+        Swal.fire({
+          title: 'Enter a toDo',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        })
+      } else {
+        const task = {
+          activity: input.value,
+          date: new Date().toLocaleString()
+        };
+        toDo.push(task);
+        display();
+        input.value = "";
+        localStorage.setItem("task", JSON.stringify(toDo));
+      }
+    }
+
+    function display() {
+      myTable.innerHTML = `
+          
+            <th id="me">S/N</th>
+            <th  id="me" style="text-align: left;">MY TASK</th>
+            <th  id="me" style="text-align: center;">DATE</th>
+            <th  id="me">ACTIONS</th>
+        
+        `;
+
+      for (let index = 0; index < toDo.length; index++) {
+        myTable.innerHTML += `
+            <tr>
+              <td>${index + 1}</td>
+              <td  style="text-align: left;">${toDo[index].activity}</td>
+              <td  style="text-align: center;">${toDo[index].date}</td> 
+              <td>
+                <button onclick="deleteItem(${index})"><i class="fa fa-trash try" aria-hidden="true"></i></button>
+                <button data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="editCart(${index})"><i class="fa fa-pencil ms-4" aria-hidden="true"></i></button>
+              </td>
+            </tr>`;
+      }
+    }
+
+    function deleteItem(index) {
+      toDo.splice(index, 1);
+      display();
+      localStorage.setItem("task", JSON.stringify(toDo));
+    }
+
+    let editIndex;
+
+    function editCart(index) {
+      editIndex = index;
+      document.getElementById("enter").value = toDo[index].activity;
+    }
+
+    function saveChanges() {
+      const newTask = document.getElementById("enter").value;
+      toDo[editIndex].activity = newTask;
+      display();
+      localStorage.setItem("task", JSON.stringify(toDo));
+      $('#exampleModal').modal('hide');
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+
+</html>
